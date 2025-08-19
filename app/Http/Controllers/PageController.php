@@ -38,7 +38,7 @@ class PageController extends Controller
         $konten = $converter->convert($konten);
         $judul = $request->judul;
         $style = $request->style;
-        $images = $request->_files;
+        $images = json_decode($request->_files, true);
 
         $body = AiAgent::generatePage($konten, $style, $images);
 
@@ -78,7 +78,14 @@ class PageController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        Page::find($id)->update([
+            'html' => $request->html,
+            'judul' => $request->judul,
+            'slug' => $request->slug,
+        ]);
+
+        // return redirect()->route('page.index')->withSuccess('Halaman berhasil diperbarui');
+        return redirect()->route('page.show', [$id])->withSuccess('Halaman berhasil diperbarui');
     }
 
     /**

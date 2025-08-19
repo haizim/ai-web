@@ -44,7 +44,7 @@ class Gemini
         if ($response->getStatusCode() == 200) {
             $result = json_decode((string)$response->getBody(), true);
             // var_dump($result);
-            // dd($result);
+            // dd($chats, $result);
             return [
                 'response' => $result['candidates'][0]['content']['parts'][0]['text'],
                 'token' => $result['usageMetadata']['promptTokenCount']
