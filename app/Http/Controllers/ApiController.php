@@ -39,9 +39,9 @@ class ApiController extends Controller
     public function regenerate($id)
     {
         $page = Page::find($id);
-        $page->html = AiAgent::generatePage($page->konten, $page->style, $page->images);
-        $page->save();
-        return response()->json(['html' => $page->html]);
+        $html = AiAgent::generatePage($page->konten, $page->style, $page->images);
+        
+        return response()->json(['html' => $html]);
     }
 
     public function editPage(Request $request)
@@ -51,5 +51,15 @@ class ApiController extends Controller
         
         $body = AiAgent::editPage($html, $command);
         return response()->json(['html' => $body]);
+    }
+
+    public function generateStyle(Request $request)
+    {
+        $converter = new HtmlConverter();
+        $konten = $request->konten;
+        $konten = $converter->convert($konten);
+        
+        $body = AiAgent::generateStyle($konten);
+        return response()->json(['style' => $body]);
     }
 }

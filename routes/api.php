@@ -11,3 +11,4 @@ Route::get('/user', function (Request $request) {
 Route::post('/generate', [ApiController::class, 'generate'])->name('api.generate');
 Route::get('/regenerate/{id}', [ApiController::class, 'regenerate'])->name('api.regenerate');
 Route::post('/edit-page', [ApiController::class, 'editPage'])->name('api.edit-page');
+Route::post('/generate-style', [ApiController::class, 'generateStyle'])->name('api.generate-style');

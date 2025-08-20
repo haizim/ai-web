@@ -18,7 +18,7 @@
 
 {!! form()->put()->action(route('page.update', $page->id))->id('form') !!}
     
-<div x-data="editPage()">
+<div x-data="editPage()" style="height: 100vh; overflow: hidden;">
     <div class="ui grid">
         <div :class="code_size + ' wide column p-r-0 p-b-0'" :style="code_size == 'zero' ? 'display: none' : ''">
             <textarea id="editor" name="html">{!! $page->html !!}</textarea>
@@ -26,7 +26,7 @@
             <div class="ui fluid input">
                 <textarea id="command" placeholder="Apa yang ingin diubah?" style="height: 11.5vh; width: 100%;"></textarea>
             </div>
-            <button type="button" class="ui icon black fluid button" onclick="send_command()"><i class="robot icon"></i></button>
+            <button type="button" class="ui icon black fluid bottom attached button" onclick="send_command()"><i class="robot icon"></i></button>
         </div>
 
         <div :class="preview_size + ' wide column p-l-0 p-b-0'">
