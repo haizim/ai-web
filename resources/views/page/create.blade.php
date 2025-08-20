@@ -23,13 +23,13 @@
 
         {!! form()->textarea('style')->id('style')->placeholder('Deskripsi Tampilan')->required()->class('m-b-1') !!}
 
-        {!! form()->uploader('files')->limit(50)->extensions(['jpg', 'png', 'gif'])->label('Gambar') !!}
+        {!! form()->uploader('files')->id('files')->limit(50)->extensions(['jpg', 'png', 'gif'])->label('Gambar') !!}
 
         <div class="ui buttons fluid">
             <x-volt-link-button class="basic" url="{!! url()->previous() !!}" icon="arrow left">
                 Kembali
             </x-volt-link-button>
-            <x-volt-button id="submit">
+            <x-volt-button id="submit" type="button" onclick="generate()">
                 Buat
             </x-volt-button>
         </div>
@@ -42,7 +42,7 @@
     </div>
 </div>
 <script>
-    function validate() {
+    function generate() {
         const judul = document.getElementById('judul').value;
         const slug = document.getElementById('slug').value;
         const konten = document.getElementById('konten').value;
@@ -54,11 +54,44 @@
             return false;
         } else {
             $('#loading-modal').modal('show');
-            document.getElementById('submit').disabled = true;
+            document.getElementById
+            ('submit').disabled = true;
 
-            $('#form').submit();
+            const data = getFormData($('#form'));
+
+            fetch('{{ route('api.generate') }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                window.location.href = '{{ route('page.edit', ':id') }}'.replace(':id', data.id);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            })
+            .finally(() => {
+                $('#loading-modal').modal('hide');
+                document.getElementById('submit').disabled = false;
+            });
+            // $('#form').submit();
         }
 
     }
+
+    function getFormData($form){
+        var unindexed_array = $form.serializeArray();
+        var indexed_array = {};
+
+        $.map(unindexed_array, function(n, i){
+            indexed_array[n['name']] = n['value'];
+        });
+
+        return indexed_array;
+    }
+
 </script>
 </x-volt-base>

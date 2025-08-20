@@ -19,7 +19,7 @@ class PageTable extends TableView
         if ($this->sortPayload()['sort']) {
             $query = $query->autoSort($this->sortPayload());
         } else {
-            $query = $query->orderBy('judul', 'asc');
+            $query = $query->orderBy('updated_at', 'desc');
         }
 
         $search = $this->search;
