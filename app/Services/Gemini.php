@@ -5,9 +5,9 @@ use GuzzleHttp\Client;
 
 class Gemini
 {
-    public static function send($chats, $system = null, $thinking = false)
+    public static function send($chats, $system = null, $thinking = false, $model = null)
     {
-        $model = config('ai.gemini.model');
+        $model = $model ?? config('ai.gemini.model');
         $key = config('ai.gemini.key');
         $url = "https://generativelanguage.googleapis.com/v1beta/models/$model:generateContent?key=$key";
 
@@ -53,7 +53,7 @@ class Gemini
         }
     }
 
-    public static function generate($prompt, $system = null, $thinking = false)
+    public static function generate($prompt, $system = null, $thinking = false, $model = null)
     {
         $chats = [
             [
@@ -62,6 +62,6 @@ class Gemini
                 ]
             ]
         ];
-        return self::send($chats, $system, $thinking);
+        return self::send($chats, $system, $thinking, $model);
     }
 }

@@ -161,6 +161,6 @@ IMPORTANT NOTE: Start directly with the output, do not output any delimiters.";
             'command' => $command
         ]);
         
-        return Gemini::generate($json, $system, true)['response'];
+        return Gemini::generate($json, $system)['response'];
     }
 }
