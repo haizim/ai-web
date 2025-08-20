@@ -22,6 +22,7 @@ Route::middleware(['auth', 'verified'])->group(function() {
 
     Route::resource('page', \App\Http\Controllers\PageController::class);
 });
+Route::get('/p/{slug}', [\App\Http\Controllers\PageController::class, 'show'])->name('p.show');
 
 include __DIR__.'/auth.php';
 include __DIR__.'/my.php';

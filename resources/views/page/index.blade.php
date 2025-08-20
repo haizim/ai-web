@@ -7,5 +7,5 @@
         />
     </x-slot>
 
-
+    @livewire(\App\Livewire\Table\PageTable::class)
 </x-volt-app>

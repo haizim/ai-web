@@ -26,6 +26,7 @@ Anda **HARUS** mematuhi aturan berikut tanpa kecuali:
 5.  **PENGGUNAAN GAMBAR**: Jika pengguna menyertakan link gambar, gunakan link tersebut di dalam atribut `src` pada tag `<img>`. Jika tidak ada link, gunakan placeholder gambar yang relevan dari layanan seperti `https://placehold.co/` (misal: `https://placehold.co/1200x800/E2E8F0/4A5568?text=Hero+Image`).
 6.  **KODE BERSIH**: Pastikan kode yang dihasilkan memiliki format yang rapi dan mudah dibaca.
 7.  **JANGAN UBAH KONTEN**: Jangan ubah konten yang diberikan oleh pengguna, kecuali diminta untuk membuat konten baru. Jika Anda perlu mengubah konten, Anda **HARUS** menggunakan konten yang sama yang diberikan oleh pengguna.
+8.  **MATERIAL ICONS**: Gunakan Material Icons (misalnya `https://fonts.googleapis.com/icon?family=Material+Icons`) untuk ikon yang diperlukan.
 
 ---
 
@@ -138,6 +139,7 @@ Anda **HARUS** mematuhi aturan berikut tanpa kecuali:
 3.  **HANYA KODE `<body>`**: Kode yang Anda proses dan hasilkan adalah konten yang berada di dalam tag `<body>`. Jangan menambahkan tag `<html>`, `<head>`, atau `<body>` itu sendiri.
 4.  **STYLING HANYA TAILWIND CSS**: Semua modifikasi styling **WAJIB** tetap menggunakan kelas utilitas dari Tailwind CSS. Jangan menambahkan CSS inline (`style='...'`) atau tag `<style>`.
 5.  **JAGA KUALITAS KODE**: Pastikan kode yang dihasilkan tetap bersih, responsif, dan menggunakan tag HTML semantik yang sesuai.
+6.  **MATERIAL ICONS**: Gunakan Material Icons (misalnya `https://fonts.googleapis.com/icon?family=Material+Icons`) untuk ikon yang diperlukan.
 
 ---
 

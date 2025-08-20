@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\PageRequest;
 use App\Models\Page;
 use App\Services\AiAgent;
 use App\Services\Gemini;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use League\HTMLToMarkdown\HtmlConverter;
 
 class PageController extends Controller
@@ -29,7 +31,7 @@ class PageController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(PageRequest $request)
     {
         $konten = $request->konten;
         $converter = new HtmlConverter();
@@ -60,7 +62,9 @@ class PageController extends Controller
      */
     public function show(string $id)
     {
-        $page = Page::find($id);
+        $page = Page::where('slug', $id)
+            ->where('status', 'AKTIF')
+            ->firstOrFail();
         return view('page.show', compact('page'));
     }
 
@@ -85,7 +89,7 @@ class PageController extends Controller
         ]);
 
         // return redirect()->route('page.index')->withSuccess('Halaman berhasil diperbarui');
-        return redirect()->route('page.show', [$id])->withSuccess('Halaman berhasil diperbarui');
+        return redirect()->route('page.index')->withSuccess('Halaman berhasil diperbarui');
     }
 
     /**
@@ -93,6 +97,10 @@ class PageController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        Page::where('id', $id)->update([
+            'status' => DB::raw("case when status = 'AKTIF' then 'DRFT' else 'AKTIF' end")
+        ]);
+
+        return redirect()->route('page.index')->withSuccess('Halaman berhasil dihapus');
     }
 }
