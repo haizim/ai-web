@@ -27,6 +27,7 @@ class PageRequest extends FormRequest
             'konten' => 'required',
             'style' => 'required',
             '_files' => 'nullable',
+            'html' => 'nullable',
         ];
     }
 }

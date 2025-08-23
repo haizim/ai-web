@@ -59,7 +59,26 @@ class ApiController extends Controller
         $konten = $request->konten;
         $konten = $converter->convert($konten);
         
-        $body = AiAgent::generateStyle($konten);
-        return response()->json(['style' => $body]);
+        $type = '';
+        if (isset($request->style) && $request->style !== null && $request->style !== '') {
+            $body = AiAgent::generateStyleFromDesc($konten, $request->style);
+            $type = 'with style';
+        } else {
+
+            $body = AiAgent::generateStyle($konten);
+            $type = 'without style';
+        }
+        // return response()->json(['style' => $body]);
+        return ['style' => $body, 'type' => $type];
+    }
+
+    public function generatePreview(Request $request)
+    {
+        $converter = new HtmlConverter();
+        $konten = $request->konten;
+        $konten = $converter->convert($konten);
+        
+        $body = AiAgent::generatePage($konten, $request->style, $request->files);
+        return response()->json(['html' => $body]);
     }
 }

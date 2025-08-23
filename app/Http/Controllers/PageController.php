@@ -33,6 +33,18 @@ class PageController extends Controller
      */
     public function store(PageRequest $request)
     {
+        $data = $request->validated();
+        $data['images'] = $request['_files'];
+        unset($data['_files']);
+        
+        $page = Page::create($data);
+
+        // return redirect()->route('page.edit', [$page->id]);
+        return redirect()->route('page.index')->withSuccess('Halaman berhasil dibuat');
+    }
+
+    public function store_old(PageRequest $request)
+    {
         $konten = $request->konten;
         $converter = new HtmlConverter();
         $konten = str_replace("<figure>", "", $konten);
@@ -48,7 +60,7 @@ class PageController extends Controller
             'slug' => $request->slug,
             'judul' => $judul,
             'style' => $style,
-            'konten' => $konten,
+            'konten' => $request->konten,
             'images' => $images,
             'html' => $body,
         ];
