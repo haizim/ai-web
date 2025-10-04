@@ -139,7 +139,8 @@ let html = ''
 function generatePreview() {
     const konten = $('#konten').val();
     const style = $('#style').val();
-    const files = $('[name=_files]').val()
+    let files = $('[name=_files]').val()
+    files = JSON.parse(files.length > 0 ? files : '[]')
     const btn = document.getElementById('preview');
     if (!konten) return alert('konten tidak boleh kosong!');
 
