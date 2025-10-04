@@ -35,6 +35,7 @@ class PageController extends Controller
     {
         $data = $request->validated();
         $data['images'] = $request['_files'];
+        $data['user_id'] = auth()->user()->id;
         unset($data['_files']);
         
         $page = Page::create($data);
@@ -43,7 +44,7 @@ class PageController extends Controller
         return redirect()->route('page.index')->withSuccess('Halaman berhasil dibuat');
     }
 
-    public function store_old(PageRequest $request)
+    /*public function store_old(PageRequest $request)
     {
         $konten = $request->konten;
         $converter = new HtmlConverter();
@@ -65,10 +66,11 @@ class PageController extends Controller
             'html' => $body,
             'user_id' => auth()->user()->id,
         ];
+        
         $page = Page::create($newPage);
 
         return redirect()->route('page.edit', [$page->id]);
-    }
+    }*/
 
     /**
      * Display the specified resource.
