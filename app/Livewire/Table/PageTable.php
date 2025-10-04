@@ -14,7 +14,7 @@ class PageTable extends TableView
 {
     public function data()
     {
-        $query = Page::query();
+        $query = Page::query()->where('user_id', auth()->user()->id);
 
         if ($this->sortPayload()['sort']) {
             $query = $query->autoSort($this->sortPayload());

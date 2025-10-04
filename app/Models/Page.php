@@ -24,6 +24,7 @@ class Page extends Model
         'chats',
         'html',
         'is_home',
+        'user_id'
     ];
 
     /**
@@ -36,4 +37,9 @@ class Page extends Model
         'chats' => 'array',
         'is_home' => 'boolean',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

@@ -63,6 +63,7 @@ class PageController extends Controller
             'konten' => $request->konten,
             'images' => $images,
             'html' => $body,
+            'user_id' => auth()->user()->id,
         ];
         $page = Page::create($newPage);
 
@@ -86,6 +87,9 @@ class PageController extends Controller
     public function edit(string $id)
     {
         $page = Page::find($id);
+        if ($page->user_id !== auth()->user()->id) {
+            abort(403);
+        }
         return view('page.edit', compact('page'));
     }
 
