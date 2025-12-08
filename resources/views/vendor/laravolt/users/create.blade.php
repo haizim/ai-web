@@ -5,7 +5,7 @@
     </x-slot>
 
     <x-volt-panel title="Form Tambah Pengguna" icon="user-plus">
-        {!! form()->open()->post()->action(route('epicentrum::users.store'))->horizontal() !!}
+        {!! form()->open()->post()->action(route('users-custom.store'))->horizontal() !!}
         {!! form()->text('name')->label(trans('laravolt::users.name'))->required() !!}
         {!! form()->text('email')->label(trans('laravolt::users.email'))->required() !!}
         {!! form()->input('password')->appendButton(trans('laravolt::action.generate_password'), 'randomize')->label(trans('laravolt::users.password'))->required() !!}

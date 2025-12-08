@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Home;
+use App\Http\Controllers\UsersCustomController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -19,6 +20,8 @@ Route::redirect('/', 'auth/login');
 // Route::middleware(['auth', 'verified'])->group(fn () => Route::get('/home', Home::class)->name('home'));
 Route::middleware(['auth', 'verified'])->group(function() {
     Route::get('/home', Home::class)->name('home');
+
+    Route::resource('/users-custom', UsersCustomController::class);
 
     Route::get('/page/create2', [\App\Http\Controllers\PageController::class, 'create2'])->name('page.create2');
     Route::resource('page', \App\Http\Controllers\PageController::class);
