@@ -161,8 +161,12 @@ function generatePreview() {
     .then(data => {
         console.log(data);
         html = data
+        const data_html = data.html.replaceAll('```html', '').replaceAll('```', '').replaceAll('`', "'") 
+        // console.log(html);
         
-        $('#html').val(data.html);
+        // html = html
+        
+        $('#html').val(data_html);
         updatePreview()
         // document.getElementById('html').value = data.html;
     })
