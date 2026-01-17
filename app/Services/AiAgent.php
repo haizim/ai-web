@@ -13,7 +13,7 @@ class AiAgent
             'images' => $images
         ]);
         
-        return Gemini::generate($json, $system)['response'];
+        return OpenRouter::generate($json, $system)['response'];
     }
 
     public static function editPage($html, $command)
@@ -25,15 +25,14 @@ class AiAgent
             'command' => $command
         ]);
         
-        return Gemini::generate($json, $system)['response'];
+        return OpenRouter::generate($json, $system)['response'];
     }
 
     public static function generateStyle($konten)
     {
         $system = SystemPrompt::generateStyle();
-
         
-        return Gemini::generate($konten, $system)['response'];
+        return OpenRouter::generate($konten, $system, 'google/gemini-3-flash-preview')['response'];
     }
 
     public static function generateStyleFromDesc($konten, $style)
@@ -44,10 +43,11 @@ class AiAgent
             'konten' => $konten,
             'style' => $style
         ]);
-
-        return Gemini::generate($json, $system)['response'];
+        
+        return OpenRouter::generate($json, $system, 'google/gemini-3-flash-preview')['response'];
     }
 
+    // MINI APP
     public static function generateMiniApp($konten, $functionality, $style, $images = null)
     {
         $system = SystemPrompt::generateMiniApp();
@@ -59,7 +59,7 @@ class AiAgent
             'images' => $images
         ]);
         
-        return Gemini::generate($json, $system)['response'];
+        return OpenRouter::generate($json, $system)['response'];
     }
 
     public static function editMiniApp($html, $command)
@@ -71,14 +71,14 @@ class AiAgent
             'command' => $command
         ]);
         
-        return Gemini::generate($json, $system)['response'];
+        return OpenRouter::generate($json, $system)['response'];
     }
 
     public static function generateFunctionality($konten)
     {
         $system = SystemPrompt::generateFunctionality();
 
-        return Gemini::generate($konten, $system)['response'];
+        return OpenRouter::generate($konten, $system)['response'];
     }
 
     public static function generateMiniAppStyle($functionality, $style = null)
@@ -86,7 +86,7 @@ class AiAgent
         if (empty($style)) {
             $system = SystemPrompt::generateMiniAppStyleNoStyle();
 
-            return Gemini::generate($functionality, $system)['response'];
+            return OpenRouter::generate($functionality, $system)['response'];
         } else {
             $system = SystemPrompt::generateMiniAppStyleWithStyle();
 
@@ -95,7 +95,7 @@ class AiAgent
                 'style' => $style
             ]);
 
-            return Gemini::generate($json, $system)['response'];
+            return OpenRouter::generate($json, $system)['response'];
         }
     }
 }
