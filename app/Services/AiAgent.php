@@ -32,7 +32,9 @@ class AiAgent
     {
         $system = SystemPrompt::generateStyle();
         
-        return OpenRouter::generate($konten, $system, 'google/gemini-3-flash-preview')['response'];
+        // return OpenRouter::generate($konten, $system, 'google/gemini-3-flash-preview')['response'];
+        return OpenRouter::generate($konten, $system, 'z-ai/glm-4.7')['response'];
+        // return OpenRouter::generate($konten, $system)['response'];
     }
 
     public static function generateStyleFromDesc($konten, $style)
@@ -44,7 +46,9 @@ class AiAgent
             'style' => $style
         ]);
         
-        return OpenRouter::generate($json, $system, 'google/gemini-3-flash-preview')['response'];
+        // return OpenRouter::generate($json, $system, 'google/gemini-3-flash-preview')['response'];
+        return OpenRouter::generate($json, $system, 'x-ai/grok-code-fast-1')['response'];
+        // return OpenRouter::generate($json, $system)['response'];
     }
 
     // MINI APP
