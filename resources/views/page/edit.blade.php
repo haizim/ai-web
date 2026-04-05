@@ -159,7 +159,7 @@
                         <div class="ui label">
                             {{ config('app.url') }}/p/
                         </div>
-                        <input type="text" name="slug" value="{{ $page->slug }}" placeholder="URL(mis: nama-halaman)" :value="judul.replaceAll(/[^a-zA-Z0-9 ]/g, ' ').replaceAll(/\s+/g, ' ').replaceAll(' ', '-').toLowerCase()" required>
+                        <input type="text" name="slug" x-model="slug" placeholder="URL(mis: nama-halaman)" required>
                     </div>
                 </div>
 
@@ -196,16 +196,15 @@
 
                     <div class="item">
                         <div class="ui icon buttons small">
-                            <button type="submit" class="ui black button icon small">
-                                <i class="save icon"></i>
+                            <button type="button" class="ui black button" onclick="$('#mdl-edit').modal('show')">
+                                <i class="pencil icon"></i>
                             </button>
                             <button type="button" class="ui black button" onclick="generatePreview()" id="generate-preview">
                                 <i class="undo icon"></i>
                             </button>
-                            {{-- <button type="button" class="ui black button icon small" @click="showInspector = !showInspector"
-                                :class="{active: showInspector}">
-                                <i class="sliders horizontal icon"></i>
-                            </button> --}}
+                            <button type="submit" class="ui black button icon small">
+                                <i class="save icon"></i>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -806,6 +805,34 @@
         <textarea name="style" id="style" style="display: none">{{ $page->style }}</textarea>
     {!! form()->close() !!}
 
+    <div class="ui modal" id="mdl-edit">
+        <div class="header">Konten</div>
+        <div class="scrolling content">
+            <div class="ui form">
+
+                <div style="display: none">
+                    {!! form()->redactor('k', $page->konten)->id('ek')->placeholder('Konten')->required()->label('Konten') !!}
+                </div>
+                
+                {!! form()->textarea('konten', $page->konten)->id('edit-konten')->placeholder('Konten')->required()->label('Konten') !!}
+
+                {!! form()->textarea('style', $page->style)->id('edit-style')->placeholder('Deskripsi Tampilan')->required()->class('m-b-1')->label('Deskripsi Tampilan') !!}
+
+                <div style="width: 100%;text-align: right;margin-top: -5em;padding-right: .5em; margin-bottom: 1em;">
+                    <button id="generate-style" type="button" class="ui black icon button" onclick="generateStyle()">
+                        <i class="robot icon"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="actions">
+            <div class="ui black deny button">
+                <i class="remove icon"></i>
+                Tutup
+            </div>
+        </div>
+    </div>
+
     <div class="ui basic modal" id="loading-modal">
         <div class="ui icon header">
             <i class="asterisk loading icon"></i>
@@ -815,8 +842,17 @@
     <script>
         // Init Semantic UI
         $(document).ready(function () {
+            window.reditor = Redactor('#edit-konten');
             $('.ui.accordion').accordion({ exclusive: false });
             $('.ui.dropdown').dropdown();
+        });
+
+        $('#mdl-edit').modal({
+            // Fungsi ini akan berjalan setelah modal tertutup
+            onHidden: function() {
+                $('#style').val($('#edit-style').val())
+                $('#konten').val($('#edit-konten').val())
+            }
         });
 
         const COLOR_FAMILIES = ['white', 'black', 'slate', 'gray', 'zinc', 'neutral', 'stone', 'red', 'orange', 'amber', 'yellow', 'lime', 'green', 'emerald', 'teal', 'cyan', 'sky', 'blue', 'indigo', 'violet', 'purple', 'fuchsia', 'pink', 'rose'];
@@ -864,7 +900,8 @@
             fetch('{{ route('api.generate-preview') }}', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content
                 },
                 body: JSON.stringify({
                     'konten': konten,
@@ -875,8 +912,6 @@
             .then(response => response.json())
             .then(data => {
                 console.log(data);
-                html = data
-                
                 htmldata = data.html
                 console.log(htmldata);
                 
@@ -917,7 +952,8 @@
             fetch('{{ route('api.edit-page') }}', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content
                 },
                 body: JSON.stringify(data_send)
             })
@@ -944,7 +980,6 @@
             }
         });
 
-        let editor = editorApp();
         let editorInstance = null;
         function editorApp() {
             const defaultProps = {
@@ -965,7 +1000,8 @@
             };
 
             return {
-                judul: `{{ ($page->judul) }}`,
+                judul: @json($page->judul),
+                slug: @json($page->slug),
                 htmlContent: '',
                 viewport: 'desktop',
                 // ... state
@@ -1006,7 +1042,7 @@
                 iframeDoc: null,
 
                 initApp() {
-                    const starter = `{!! $html !!}`;
+                    const starter = @json($html);
                     this.htmlContent = starter;
                     this.renderIframe(starter);
                     this.saveHistory();
@@ -1079,7 +1115,7 @@
                     const colorNames = this.colors.families.join('|');
                     const shadeNames = this.colors.shades.join('|');
                     const regexPrefix = modifier ? `${modifier}:${prefix}` : prefix;
-                    const regexStr = `${regexPrefix}-(?:(?:${colorNames})-(?:${shadeNames})|white|black)`;
+                    const regexStr = `${regexPrefix}-(?:(?:${colorNames})-(?:${shadeNames})|white|black|\\[.*?\\])`;
                     this.replaceClassRegex(regexStr, '');
                 },
 
@@ -1219,6 +1255,8 @@
                 },
 
                 handleShortcuts(e) {
+                    const tag = e.target.tagName;
+                    if (tag === 'INPUT' || tag === 'TEXTAREA') return;
                     if ((e.ctrlKey || e.metaKey) && e.key === 'z') { e.preventDefault(); this.undo(); }
                     if ((e.ctrlKey || e.metaKey) && e.key === 'y') { e.preventDefault(); this.redo(); }
                 },
