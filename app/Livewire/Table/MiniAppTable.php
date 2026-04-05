@@ -40,7 +40,7 @@ class MiniAppTable extends TableView
             Label::make('status')->sortable(),
             Raw::make(
                 function ($data) {
-                    $url = route('miniapp.show', $data->slug);
+                    $url = route('a.show', $data->slug);
                     
                     return  "<a href='$url' target='_blank' class='ui tiny black icon secondary button'><i class='eye icon'></i></a>";
                 }

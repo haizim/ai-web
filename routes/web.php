@@ -29,7 +29,7 @@ Route::middleware(['auth', 'verified'])->group(function() {
     Route::resource('miniapp', \App\Http\Controllers\MiniAppController::class);
 });
 Route::get('/p/{slug}', [\App\Http\Controllers\PageController::class, 'show'])->name('p.show');
-Route::get('/miniapp/{slug}', [\App\Http\Controllers\MiniAppController::class, 'show'])->name('miniapp.show');
+Route::get('/a/{slug}', [\App\Http\Controllers\MiniAppController::class, 'show'])->name('a.show');
 
 include __DIR__.'/auth.php';
 include __DIR__.'/my.php';
