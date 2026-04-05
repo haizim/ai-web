@@ -20,7 +20,7 @@
 <div x-data="editMiniApp()" style="height: 100vh; overflow: hidden;">
     <div class="ui grid">
         <div :class="code_size + ' wide column p-r-0 p-b-0'" :style="code_size == 'zero' ? 'display: none' : ''">
-            <textarea id="editor" name="html">{!! $miniApp->html !!}</textarea>
+            <textarea id="editor" name="html">{{ $miniApp->html }}</textarea>
 
             <div class="ui fluid input">
                 <textarea id="command" placeholder="Apa yang ingin diubah?" style="height: 11.5vh; width: 100%;"></textarea>
@@ -35,7 +35,7 @@
     </div>
 
     <div style="height: 5vh; text-align: right" class="p-2">
-        <div x-data="{ judul: '{{ $miniApp->judul }}'}" class="field">
+        <div x-data="{ judul: '{{ $miniApp->judul }}', slug: '{{ $miniApp->slug }}'}" class="field">
             <div class="three fields">
                 <div class="field">
                     <input type="text" name="judul" placeholder="Judul" x-model="judul" required>
@@ -45,7 +45,7 @@
                         <div class="ui black label">
                             {{ config('app.url') }}/miniapp/
                         </div>
-                        <input type="text" name="slug" value="{{ $miniApp->slug }}" placeholder="URL(mis: nama-miniapp)" :value="judul.replaceAll(/[^a-zA-Z0-9 ]/g, ' ').replaceAll(/\s+/g, ' ').replaceAll(' ', '-').toLowerCase()" required>
+                        <input type="text" name="slug" x-model="slug" placeholder="URL(mis: nama-miniapp)" x-effect="if(judul) slug = judul.replaceAll(/[^a-zA-Z0-9 ]/g, ' ').replaceAll(/\s+/g, ' ').replaceAll(' ', '-').toLowerCase()" required>
                     </div>
                 </div>
                 <div class="field">
@@ -158,10 +158,9 @@ $('#mdl-edit').modal({
 function editMiniApp() {
     return {
         'title': 'Edit Mini App',
-        'html': `{!! $miniApp->html !!}`,
         'code_size': 'eight',
         'preview_size': 'eight',
-        
+
         setSize(code, preview) {
             this.code_size = code;
             this.preview_size = preview;
@@ -188,9 +187,20 @@ function send_command() {
         },
         body: JSON.stringify(data_send)
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) throw new Error('Request gagal');
+        return response.json();
+    })
     .then(data => {
         editor.setValue(data.html);
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        $.toast({
+            class: 'error',
+            position: 'top center',
+            message: 'Terjadi Error, silahkan coba lagi!'
+        })
     })
     .finally(() => {
         editor.options.readOnly = false
@@ -209,18 +219,18 @@ document.addEventListener('keydown', (event) => {
 
 function generatePreview() {
     if (!confirm('Yakin ingin regenerate mini app? Perubahan yang sudah ada akan hilang')) return false;
-    editor.options.readOnly = true
-    $('#loading-modal').modal('show')
 
     const konten = $('#konten').val();
     const functionality = $('#functionality').val();
     const style = $('#style').val();
-    const files = $('[name=_files]').val()
     const btn = document.getElementById('generate-preview');
     if (!konten) return alert('konten tidak boleh kosong!');
 
+    editor.options.readOnly = true;
+    $('#loading-modal').modal('show');
     btn.disabled = true;
-    btn.classList.add('loading')
+    btn.classList.add('loading');
+
     fetch('{{ route('api.generate-miniapp-preview') }}', {
         method: 'POST',
         headers: {
@@ -229,15 +239,14 @@ function generatePreview() {
         body: JSON.stringify({
             'konten': konten,
             'functionality': functionality,
-            'style': style,
-            'files': files
+            'style': style
         })
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) throw new Error('Request gagal');
+        return response.json();
+    })
     .then(data => {
-        console.log(data);
-        html = data
-        
         editor.setValue(data.html);
     })
     .catch(error => {
@@ -245,14 +254,14 @@ function generatePreview() {
         $.toast({
             class: 'error',
             position: 'top center',
-            message: `Terjadi Error, silahkan coba lagi !`
+            message: 'Terjadi Error, silahkan coba lagi!'
         })
     })
     .finally(() => {
-        editor.options.readOnly = false
-        $('#loading-modal').modal('hide')
+        editor.options.readOnly = false;
+        $('#loading-modal').modal('hide');
         btn.disabled = false;
-        btn.classList.remove('loading')
+        btn.classList.remove('loading');
     })
 }
 
@@ -272,7 +281,10 @@ function generateFunctionality() {
             'konten': konten
         })
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) throw new Error('Request gagal');
+        return response.json();
+    })
     .then(data => {
         document.getElementById('edit-functionality').value = data.functionality;
     })
@@ -318,7 +330,10 @@ function generateStyle() {
         },
         body: JSON.stringify(requestData)
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) throw new Error('Request gagal');
+        return response.json();
+    })
     .then(data => {
         document.getElementById('edit-style').value = data.style;
     })
