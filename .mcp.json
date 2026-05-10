@@ -1,12 +1,19 @@
 {
-  "mcpServers": {
-    "code-review-graph": {
-      "command": "uvx",
-      "args": [
-        "code-review-graph",
-        "serve"
-      ],
-      "type": "stdio"
+    "mcpServers": {
+        "code-review-graph": {
+            "command": "uvx",
+            "args": [
+                "code-review-graph",
+                "serve"
+            ],
+            "type": "stdio"
+        },
+        "laravel-boost": {
+            "command": "php",
+            "args": [
+                "artisan",
+                "boost:mcp"
+            ]
+        }
     }
-  }
 }
