@@ -30,6 +30,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::resource('miniapp', \App\Http\Controllers\MiniAppController::class);
 
+    Route::get('/styles/list', [StyleController::class, 'list'])->name('styles.list')->middleware(StyleView::class);
     Route::resource('styles', StyleController::class)
         ->middleware(StyleView::class);
 });

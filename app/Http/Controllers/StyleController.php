@@ -7,6 +7,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StyleRequest;
 use App\Models\Style;
 use App\Services\StyleService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
@@ -55,5 +56,19 @@ final class StyleController
         StyleService::delete((string) $style->id);
 
         return redirect()->route('styles.index')->withSuccess('Style berhasil dihapus.');
+    }
+
+    public function list(): JsonResponse
+    {
+        if (! auth()->user()) {
+            return response()->json([], 401);
+        }
+
+        $styles = Style::query()
+            ->where('user_id', auth()->user()->id)
+            ->orderBy('name')
+            ->get(['id', 'name', 'description']);
+
+        return response()->json($styles);
     }
 }

@@ -40,9 +40,14 @@
                     {!! form()->textarea('style')->id('style')->placeholder('Deskripsi Tampilan')->required()->class('m-b-1') !!}
 
                     <div style="width: 100%;text-align: right;margin-top: -4em;padding-right: .5em; margin-bottom: 1em;">
-                        <button id="generate-style" type="button" class="ui black icon button" onclick="generateStyle()">
-                            <i class="robot icon"></i>
-                        </button>
+                        <div class="ui icon buttons">
+                            <button id="load-style" type="button" class="ui black button" onclick="openLoadStyleModal()">
+                                <i class="palette icon"></i>
+                            </button>
+                            <button id="generate-style" type="button" class="ui black button" onclick="generateStyle()">
+                                <i class="robot icon"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
 
@@ -82,6 +87,22 @@
         </div>
     </div>
 </div>
+<div class="ui modal" id="load-style-modal">
+    <div class="header">Pilih Style</div>
+    <div class="scrolling content">
+        <div id="load-style-loading" class="ui active centered inline loader" style="margin: 1em auto; display: block;"></div>
+        <div id="load-style-empty" style="display: none; text-align: center; padding: 1em;">
+            Belum ada style. Silakan buat di menu <a href="{{ route('styles.index') }}">Styles</a>.
+        </div>
+        <div class="ui three column grid" id="load-style-list"></div>
+    </div>
+    <div class="actions">
+        <div class="ui black deny button">
+            <i class="remove icon"></i> Tutup
+        </div>
+    </div>
+</div>
+
 {!! form()->close() !!}
 
 <script>
@@ -182,6 +203,56 @@ function generatePreview() {
         btn.disabled = false;
         btn.classList.remove('loading')
     })
+}
+
+function openLoadStyleModal() {
+    const $list = $('#load-style-list');
+    const $loading = $('#load-style-loading');
+    const $empty = $('#load-style-empty');
+
+    $list.empty();
+    $empty.hide();
+    $loading.show();
+    $('#load-style-modal').modal('show');
+
+    fetch('{{ route('styles.list') }}', {
+        headers: { 'Accept': 'application/json' },
+        credentials: 'same-origin'
+    })
+    .then(r => r.json())
+    .then(styles => {
+        $loading.hide();
+        if (!Array.isArray(styles) || styles.length === 0) {
+            $empty.show();
+            return;
+        }
+        styles.forEach(s => {
+            const col = $('<div class="column"></div>');
+            const btn = $('<button type="button" class="ui fluid black secondary button" style="margin-bottom:.5em; white-space:normal; word-break:break-word;"></button>')
+                .text(s.name)
+                .on('click', function () {
+                    $('#style').val(s.description || '');
+                    $('#load-style-modal').modal('hide');
+                    $.toast({
+                        class: 'success',
+                        position: 'top center',
+                        message: `Style "${s.name}" dimuat.`
+                    });
+                });
+            col.append(btn);
+            $list.append(col);
+        });
+    })
+    .catch(err => {
+        $loading.hide();
+        console.error(err);
+        $.toast({
+            class: 'error',
+            position: 'top center',
+            message: 'Gagal memuat daftar style.'
+        });
+        $('#load-style-modal').modal('hide');
+    });
 }
 
 function updatePreview() {
