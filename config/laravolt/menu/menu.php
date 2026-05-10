@@ -16,6 +16,12 @@ return [
                 'icon' => 'watch-calculator',
                 // 'permissions' => [\Laravolt\Platform\Enums\Permission::MANAGE_USER],
             ],
+            'Styles' => [
+                'route' => 'styles.index',
+                'active' => 'styles/*',
+                'icon' => 'palette',
+                'permissions' => [\App\Enums\Permission::STYLES_VIEW],
+            ],
         ],
     ],
 ];

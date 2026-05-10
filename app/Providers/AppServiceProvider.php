@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Enums\Permission;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -28,6 +30,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        Gate::define(Permission::STYLES_VIEW, fn ($user) => $user->hasPermission(Permission::STYLES_VIEW));
+        Gate::define(Permission::STYLES_MANAGE, fn ($user) => $user->hasPermission(Permission::STYLES_MANAGE));
     }
 }
