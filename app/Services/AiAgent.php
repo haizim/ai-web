@@ -1,8 +1,16 @@
 <?php
+
 namespace App\Services;
 
 class AiAgent
 {
+    protected static function model(string $task): string
+    {
+        $model = config("ai.openrouter.models.$task");
+
+        return is_string($model) && $model !== '' ? $model : '';
+    }
+
     public static function generatePage($konten, $style, $images = null)
     {
         $system = SystemPrompt::generatePage();
@@ -10,10 +18,10 @@ class AiAgent
         $json = json_encode([
             'konten' => $konten,
             'tampilan' => $style,
-            'images' => $images
+            'images' => $images,
         ]);
-        
-        return OpenRouter::generate($json, $system)['response'];
+
+        return OpenRouter::generate($json, $system, self::model('generate_page'))['response'];
     }
 
     public static function editPage($html, $command)
@@ -22,19 +30,17 @@ class AiAgent
 
         $json = json_encode([
             'html' => $html,
-            'command' => $command
+            'command' => $command,
         ]);
-        
-        return OpenRouter::generate($json, $system)['response'];
+
+        return OpenRouter::generate($json, $system, self::model('edit_page'))['response'];
     }
 
     public static function generateStyle($konten)
     {
         $system = SystemPrompt::generateStyle();
-        
-        // return OpenRouter::generate($konten, $system, 'google/gemini-3-flash-preview')['response'];
-        return OpenRouter::generate($konten, $system, 'z-ai/glm-4.7')['response'];
-        // return OpenRouter::generate($konten, $system)['response'];
+
+        return OpenRouter::generate($konten, $system, self::model('generate_style'))['response'];
     }
 
     public static function generateStyleFromDesc($konten, $style)
@@ -43,12 +49,10 @@ class AiAgent
 
         $json = json_encode([
             'konten' => $konten,
-            'style' => $style
+            'style' => $style,
         ]);
-        
-        // return OpenRouter::generate($json, $system, 'google/gemini-3-flash-preview')['response'];
-        return OpenRouter::generate($json, $system, 'x-ai/grok-code-fast-1')['response'];
-        // return OpenRouter::generate($json, $system)['response'];
+
+        return OpenRouter::generate($json, $system, self::model('generate_style_from_desc'))['response'];
     }
 
     // MINI APP
@@ -60,10 +64,10 @@ class AiAgent
             'konten' => $konten,
             'functionality' => $functionality,
             'tampilan' => $style,
-            'images' => $images
+            'images' => $images,
         ]);
-        
-        return OpenRouter::generate($json, $system)['response'];
+
+        return OpenRouter::generate($json, $system, self::model('generate_miniapp'))['response'];
     }
 
     public static function editMiniApp($html, $command)
@@ -72,17 +76,17 @@ class AiAgent
 
         $json = json_encode([
             'html' => $html,
-            'command' => $command
+            'command' => $command,
         ]);
-        
-        return OpenRouter::generate($json, $system)['response'];
+
+        return OpenRouter::generate($json, $system, self::model('edit_miniapp'))['response'];
     }
 
     public static function generateFunctionality($konten)
     {
         $system = SystemPrompt::generateFunctionality();
 
-        return OpenRouter::generate($konten, $system)['response'];
+        return OpenRouter::generate($konten, $system, self::model('generate_functionality'))['response'];
     }
 
     public static function generateMiniAppStyle($functionality, $style = null)
@@ -90,16 +94,16 @@ class AiAgent
         if (empty($style)) {
             $system = SystemPrompt::generateMiniAppStyleNoStyle();
 
-            return OpenRouter::generate($functionality, $system)['response'];
+            return OpenRouter::generate($functionality, $system, self::model('generate_miniapp_style'))['response'];
         } else {
             $system = SystemPrompt::generateMiniAppStyleWithStyle();
 
             $json = json_encode([
                 'functionality' => $functionality,
-                'style' => $style
+                'style' => $style,
             ]);
 
-            return OpenRouter::generate($json, $system)['response'];
+            return OpenRouter::generate($json, $system, self::model('generate_miniapp_style'))['response'];
         }
     }
 }
